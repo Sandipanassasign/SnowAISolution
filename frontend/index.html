@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="ServiceNow AI Automation — Real-time Change Request monitoring, LLM extraction, and stakeholder notification dashboard.">
+    <title>ServiceNow AI Automation — Dashboard</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- ═══ Header ═══════════════════════════════════════════════════════ -->
+    <header class="header">
+        <div class="header-left">
+            <div class="header-logo">⚡</div>
+            <div>
+                <h1 class="header-title">ServiceNow AI Automation</h1>
+                <p class="header-subtitle">Change Request Triage &amp; Notification Pipeline</p>
+            </div>
+        </div>
+        <div class="header-actions">
+            <span id="pipeline-status" class="status-badge idle">Idle</span>
+            <span id="schedule-info" class="status-badge idle" style="font-size: 0.72rem; text-transform: none;">
+                Scheduler: Loading...
+            </span>
+            <button id="btn-run" class="btn btn-primary" onclick="triggerPipeline()">
+                ▶ Run Now
+            </button>
+            <button class="btn btn-outline" onclick="refreshAll()">
+                ↻ Refresh
+            </button>
+        </div>
+    </header>
+
+    <!-- ═══ Stats Grid ═══════════════════════════════════════════════════ -->
+    <section class="stats-grid" id="stats-grid">
+        <div class="stat-card blue">
+            <div class="stat-icon">📋</div>
+            <div class="stat-value" id="stat-total">—</div>
+            <div class="stat-label">Total Processed</div>
+        </div>
+        <div class="stat-card green">
+            <div class="stat-icon">✅</div>
+            <div class="stat-value" id="stat-notified">—</div>
+            <div class="stat-label">Notifications Sent</div>
+        </div>
+        <div class="stat-card red">
+            <div class="stat-icon">⚠️</div>
+            <div class="stat-value" id="stat-failed">—</div>
+            <div class="stat-label">Failed</div>
+        </div>
+        <div class="stat-card amber">
+            <div class="stat-icon">🏢</div>
+            <div class="stat-value" id="stat-lobs">—</div>
+            <div class="stat-label">LOBs Impacted</div>
+        </div>
+    </section>
+
+    <!-- ═══ Filters ══════════════════════════════════════════════════════ -->
+    <div class="filters-bar">
+        <select id="filter-lob" class="filter-select" onchange="loadTickets()">
+            <option value="">All Lines of Business</option>
+        </select>
+        <select id="filter-status" class="filter-select" onchange="loadTickets()">
+            <option value="">All Statuses</option>
+            <option value="notified">✅ Notified</option>
+            <option value="extracted">🔮 Extracted</option>
+            <option value="mapped">📍 Mapped</option>
+            <option value="processing">🔄 Processing</option>
+            <option value="extraction_failed">❌ Extraction Failed</option>
+            <option value="mapping_failed">❌ Mapping Failed</option>
+            <option value="notification_failed">❌ Notification Failed</option>
+        </select>
+    </div>
+
+    <!-- ═══ Tickets Table ════════════════════════════════════════════════ -->
+    <section>
+        <div class="section-header">
+            <h2 class="section-title">Processed Change Requests</h2>
+        </div>
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>CR Number</th>
+                        <th>Summary</th>
+                        <th>LOB</th>
+                        <th>Mail Codes</th>
+                        <th>QA Lead</th>
+                        <th>Status</th>
+                        <th>Processed</th>
+                    </tr>
+                </thead>
+                <tbody id="tickets-tbody">
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-state-icon">📭</div>
+                                <div class="empty-state-text">No tickets processed yet. Click <strong>Run Now</strong> to start.</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <!-- ═══ Two Column: Runs + LOB Chart ═════════════════════════════════ -->
+    <div class="two-col">
+        <!-- Recent Runs -->
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">Pipeline Run History</h2>
+            </div>
+            <div class="runs-list" id="runs-list">
+                <div class="empty-state">
+                    <div class="empty-state-text">No runs yet.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- LOB Breakdown -->
+        <section>
+            <div class="section-header">
+                <h2 class="section-title">LOB Breakdown</h2>
+            </div>
+            <div class="lob-chart" id="lob-chart">
+                <div class="empty-state">
+                    <div class="empty-state-text">No data yet.</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+</div>
+
+<!-- Toast container -->
+<div class="toast-container" id="toast-container"></div>
+
+<!-- ═══ CR Drill-down Modal ═══════════════════════════════════════════ -->
+<div id="ticket-modal" class="modal-backdrop" onclick="handleModalBackdropClick(event)">
+    <div class="modal-card">
+        <div class="modal-header">
+            <div class="modal-title-group">
+                <span id="modal-cr-number" class="modal-cr-number">CHG0000000</span>
+                <span id="modal-status-pill" class="status-pill notified">Notified</span>
+            </div>
+            <button class="modal-close-btn" onclick="closeTicketModal()" title="Close (Esc)">✕</button>
+        </div>
+        <div class="modal-body" id="modal-body">
+            <!-- Dynamic content loaded via app.js -->
+        </div>
+        <div class="modal-footer">
+            <div class="modal-footer-left">
+                <span id="modal-processed-at" class="modal-meta-text">Processed: —</span>
+            </div>
+            <div class="modal-footer-right">
+                <button id="modal-reprocess-btn" class="btn btn-outline" onclick="reprocessModalTicket()">
+                    🔄 Re-process
+                </button>
+                <button class="btn btn-primary" onclick="closeTicketModal()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/app.js"></script>
+</body>
+</html>

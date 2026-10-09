@@ -1,0 +1,27 @@
+{
+  "Retail Banking": {
+    "qa_lead": "jane.doe@bank.com",
+    "qa_team": ["jane.doe@bank.com", "john.smith@bank.com"],
+    "escalation": "retail.escalation@bank.com"
+  },
+  "Commercial Banking": {
+    "qa_lead": "alice.wong@bank.com",
+    "qa_team": ["alice.wong@bank.com", "bob.kumar@bank.com"],
+    "escalation": "commercial.escalation@bank.com"
+  },
+  "Wealth Management": {
+    "qa_lead": "carlos.reyes@bank.com",
+    "qa_team": ["carlos.reyes@bank.com", "diana.chen@bank.com"],
+    "escalation": "wealth.escalation@bank.com"
+  },
+  "Card Services": {
+    "qa_lead": "emily.taylor@bank.com",
+    "qa_team": ["emily.taylor@bank.com", "frank.nair@bank.com"],
+    "escalation": "cards.escalation@bank.com"
+  },
+  "Digital Channels": {
+    "qa_lead": "grace.lee@bank.com",
+    "qa_team": ["grace.lee@bank.com", "henry.patel@bank.com"],
+    "escalation": "digital.escalation@bank.com"
+  }
+}

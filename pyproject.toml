@@ -1,0 +1,36 @@
+[project]
+name = "servicenow-ai-automation"
+version = "1.0.0"
+description = "Automated ServiceNow Change Request triage and stakeholder notification using LlamaIndex"
+requires-python = ">=3.10"
+dependencies = [
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+    "pydantic>=2.5.0",
+    "llama-index-core>=0.11.0",
+    "llama-index-llms-openai-like>=0.2.0",
+    "llama-index-program-openai>=0.2.0",
+    "fastapi>=0.110.0",
+    "uvicorn[standard]>=0.27.0",
+    "apscheduler>=3.10.0",
+    "sse-starlette>=2.0.0",
+    "sqlalchemy>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "mypy>=1.7.0",
+    "ruff>=0.1.0",
+]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+ignore = ["B008"]
+
+[tool.mypy]
+python_version = "3.10"
+strict = true
